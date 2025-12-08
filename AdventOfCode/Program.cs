@@ -15,10 +15,10 @@ internal class Program
         Console.WriteLine("If it exist, enter the file's name : ");
         string file = Console.ReadLine() ?? string.Empty;
 
-        Riddle enigme = new Riddle(day, number, file);
+        Riddle riddle = new Riddle(day, number, file);
 
 
 
-        Console.WriteLine("The solution is :" + enigme.Solution);
+        Console.WriteLine("The solution is :" + riddle.Solution);
     }
 }

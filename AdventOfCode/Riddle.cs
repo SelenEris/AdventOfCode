@@ -243,9 +243,11 @@ namespace AdventOfCode
                     while (idIndexInteger <= idEndInteger)
                     {
                         string idIndexString = idIndexInteger.ToString();
-                        string firstPart = idIndexString.Substring(0, idIndexString.Length / 2);
-                        string lastPart = idIndexString.Substring(idIndexString.Length / 2);
-                        if (firstPart == lastPart) countInvalidIDs += idIndexInteger;
+                        bool isEqual = Utils.RecursiveDivision(idIndexString, 2);
+                        if (isEqual)
+                        {
+                            countInvalidIDs += idIndexInteger;
+                        }
                         idIndexInteger++;
                     }
                 }
