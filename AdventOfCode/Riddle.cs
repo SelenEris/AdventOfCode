@@ -13,7 +13,7 @@ namespace AdventOfCode
         public int Number = 1;
         public string FileName = string.Empty;
         private string FilePath = string.Empty;
-        public int Solution = 0;
+        public long Solution = 0;
 
         public Riddle(int day, int number, string path)
         {
@@ -30,12 +30,17 @@ namespace AdventOfCode
                 case 0:
                     break;
                 case 1:
-                    if(Day == 1)CodeSafe1();
+                    if(Number == 1)CodeSafe1();
                     else CodeSafe2();
                     break;
+                case 2:
+                    if (Number == 1) IDCheck1();
+                    else IDCheck2();
+                    break;
+
             }
         }
-
+        #region Day 1
         public void CodeSafe1()
         {
 
@@ -54,10 +59,8 @@ namespace AdventOfCode
                 while (line != null)
                 {
                     countline++;
-                    Console.WriteLine("Position : " + countSafe);
                     string direction = line.Substring(0, 1);
                     int numberTick = Convert.ToInt32(line.Substring(1));
-                    Console.WriteLine("Ligne : " + line);
 
                     while (numberTick > 99)
                     {
@@ -92,14 +95,12 @@ namespace AdventOfCode
 
                     if (countSafe == 0) count0++;
 
-                    Console.WriteLine("Point final : " + countSafe);
 
                     line = sr.ReadLine();
 
                 }
                 sr.Close();
                 Solution = count0;
-                Console.WriteLine("Nombre de lignes : " + countline);
             }
             else
             {
@@ -125,10 +126,8 @@ namespace AdventOfCode
                 while (line != null)
                 {
                     countline++;
-                    Console.WriteLine("Position : " + countSafe);
                     string direction = line.Substring(0, 1);
                     int numberTick = Convert.ToInt32(line.Substring(1));
-                    Console.WriteLine("Ligne : " + line);
 
                     while (numberTick > 99)
                     {
@@ -164,23 +163,100 @@ namespace AdventOfCode
                             
                         }
                     }
-
-
-                    Console.WriteLine("Nombre de 0 : " + count0);
-                    Console.WriteLine("Point final : " + countSafe);
-
                     line = sr.ReadLine();
 
                 }
                 sr.Close();
                 Solution = count0;
-                Console.WriteLine("Nombre de lignes : " + countline);
             }
             else
             {
                 Console.WriteLine("Le chemin spécifié n'edst pas correct.");
             }
         }
+        #endregion
+
+        #region Day 2
+        public void IDCheck1()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+                long countInvalidIDs = 0;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                sr.Close();
+
+                string [] idRanges = line.Split(',') ?? [];
+
+                foreach(string idRange in idRanges)
+                {
+                    string idStart = idRange.Split('-')[0];
+                    string idEnd = idRange.Split('-')[1];
+                    long idEndInteger = long.Parse(idEnd);
+                    long idIndexInteger = long.Parse(idStart);
+
+                    while (idIndexInteger <= idEndInteger)
+                    { 
+                        string idIndexString = idIndexInteger.ToString();
+                        string firstPart = idIndexString.Substring(0,idIndexString.Length / 2);
+                        string lastPart = idIndexString.Substring(idIndexString.Length / 2);
+                        if(firstPart == lastPart) countInvalidIDs+=idIndexInteger;
+                        idIndexInteger++;
+                    }
+                }
+                Solution = countInvalidIDs;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+
+        public void IDCheck2()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+                long countInvalidIDs = 0;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                sr.Close();
+
+                string[] idRanges = line.Split(',') ?? [];
+
+                foreach (string idRange in idRanges)
+                {
+                    string idStart = idRange.Split('-')[0];
+                    string idEnd = idRange.Split('-')[1];
+                    long idEndInteger = long.Parse(idEnd);
+                    long idIndexInteger = long.Parse(idStart);
+
+                    while (idIndexInteger <= idEndInteger)
+                    {
+                        string idIndexString = idIndexInteger.ToString();
+                        string firstPart = idIndexString.Substring(0, idIndexString.Length / 2);
+                        string lastPart = idIndexString.Substring(idIndexString.Length / 2);
+                        if (firstPart == lastPart) countInvalidIDs += idIndexInteger;
+                        idIndexInteger++;
+                    }
+                }
+                Solution = countInvalidIDs;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+        #endregion
     }
 
 }
