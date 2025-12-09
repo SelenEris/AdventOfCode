@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.Immutable;
 
 namespace AdventOfCode
 {
@@ -36,6 +37,10 @@ namespace AdventOfCode
                 case 2:
                     if (Number == 1) IDCheck1();
                     else IDCheck2();
+                    break;
+                case 3:
+                    if (Number == 1) Joltage1();
+                    else Joltage2();
                     break;
 
             }
@@ -252,6 +257,108 @@ namespace AdventOfCode
                     }
                 }
                 Solution = countInvalidIDs;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+        #endregion
+
+
+        #region Day 3
+        public void Joltage1()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+                long countTotalJoltage = 0;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                while (line != null)
+                {
+                    List<char> listIndividualJoltage = line.ToList();
+
+                    char firstHighNumber = '0';
+                    int indexFirstHighNumber = 0;
+                    char secondHighNumber = '0';
+                    for (int i = 0; i < listIndividualJoltage.Count - 1; i++)
+                    {
+                        if (listIndividualJoltage[i] > firstHighNumber)
+                        {
+                            firstHighNumber = listIndividualJoltage[i];
+                            indexFirstHighNumber = i;
+                        }
+                    }
+
+                    for (int j = indexFirstHighNumber+1; j < listIndividualJoltage.Count; j++)
+                    {
+                        if (listIndividualJoltage[j] > secondHighNumber)
+                        {
+                            secondHighNumber = listIndividualJoltage[j];
+                        }
+                    }
+
+                    string stringJoltage = firstHighNumber.ToString() + secondHighNumber.ToString();
+                    countTotalJoltage += long.Parse(stringJoltage);
+
+                    line = sr.ReadLine();
+                }
+                sr.Close();
+
+                Solution = countTotalJoltage;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+
+        public void Joltage2()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+                long countTotalJoltage = 0;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                while (line != null)
+                {
+                    List<char> listIndividualJoltage = line.ToList();
+
+                    string stringJoltage = string.Empty;
+                    int indexHighNumber = -1;
+                    for (int i = 0; i < 12; i++)
+                    {
+                        char highNumber = '0';
+                        int j = indexHighNumber + 1;
+                        while(j < listIndividualJoltage.Count - (11 - i))
+                        {
+                            if (listIndividualJoltage[j] > highNumber)
+                            {
+                                highNumber = listIndividualJoltage[j];
+                                indexHighNumber = j;
+                            }
+                            j++;
+                        }
+                        stringJoltage += highNumber.ToString();
+                    }
+
+                    countTotalJoltage += long.Parse(stringJoltage);
+
+                    line = sr.ReadLine();
+                }
+                sr.Close();
+
+                Solution = countTotalJoltage;
             }
             else
             {
