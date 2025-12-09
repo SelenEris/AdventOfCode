@@ -8,6 +8,6 @@ namespace AdventOfCode
 {
     internal class Constants
     {
-        public const string Folder = "D:\\Documents\\AdventOfCode\\input";
+        public const string Folder = @"..\..\..\..\..\input";
     }
 }
