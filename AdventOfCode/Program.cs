@@ -12,10 +12,10 @@ internal class Program
         Console.WriteLine("Enter the problem's number : ");
         int number = Convert.ToInt32(Console.ReadLine());
 
-        Console.WriteLine("If it exist, enter the file's name : ");
-        string file = Console.ReadLine() ?? string.Empty;
+        Console.WriteLine("If it exist, enter the version of the file : ");
+        string version = Console.ReadLine() ?? string.Empty;
 
-        Riddle riddle = new Riddle(day, number, file);
+        Riddle riddle = new Riddle(day, number, version);
 
 
 

@@ -9,5 +9,7 @@ namespace AdventOfCode
     internal class Constants
     {
         public const string Folder = @"..\..\..\..\..\input";
+        public const string NameFile = @"\input";
+        public const string TextExtention = ".txt";
     }
 }

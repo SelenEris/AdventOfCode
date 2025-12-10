@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Immutable;
+using System.Collections;
 
 namespace AdventOfCode
 {
@@ -16,14 +17,14 @@ namespace AdventOfCode
         private string FilePath = string.Empty;
         public long Solution = 0;
 
-        public Riddle(int day, int number, string path)
+        public Riddle(int day, int number, string version)
         {
             Day = day;
             Number = number;
-            if (!string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(version))
             {
-                FileName = path;
-                FilePath = Constants.Folder + "\\" + path;
+                FileName = Constants.NameFile + day.ToString() + "-" + version + Constants.TextExtention;
+                FilePath = Constants.Folder + FileName;
             }
 
             switch (Day)
@@ -41,6 +42,10 @@ namespace AdventOfCode
                 case 3:
                     if (Number == 1) Joltage1();
                     else Joltage2();
+                    break;
+                case 4:
+                    if (Number == 1) RollsOfPaper1();
+                    else RollsOfPaper2();
                     break;
 
             }
@@ -423,6 +428,113 @@ namespace AdventOfCode
                 sr.Close();
 
                 Solution = countTotalJoltage;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+        #endregion
+
+        #region Day 4
+        /// <summary>
+        /// Calculation of the joltage needed to power the escalators, first part
+        /// </summary>
+        public void RollsOfPaper1()
+        {
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+
+                List<List<char>> lines = new List<List<char>>();
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                //Loop on the lines in the file to make a map : in each line, there is a list of rolls
+                for (int i=0;  line != null; i++)
+                {
+                    List<char> listRolls = line.ToList();
+                    lines.Add(listRolls);
+                    line = sr.ReadLine();
+                }
+                    
+                sr.Close();
+
+                //Now that the map is done, the search begins
+
+                int totalRolls = 0;
+
+                //First loop on the lines
+                for (int i=0; i < lines.Count ; i++)
+                {
+                    List<char> listRolls = lines[i];
+
+                    //Second loop on the rolls
+                    for (int j=0; j < listRolls.Count; j++)
+                    {
+                        char roll = listRolls[j];
+
+                        int countCloseRolls = 0;
+
+                        //If a roll is found, count the number of close rolls around
+                        if (roll == '@')
+                        {
+                            //It's a square where the limits are 'i-1','i+1' and 'j-1', 'j+1', but making shure we don't go over the map
+                           
+                            for (int k = (i != 0) ? i - 1 : i; k < lines.Count && k < i + 2; k++)
+                            {
+                                for (int l = (j != 0) ? j - 1 : j; l < listRolls.Count && l < j + 2 ; l++)
+                                {
+                                    if (lines[k][l] == '@' && (k != i || l != j)) countCloseRolls++;
+                                }
+                            }
+
+                            if(countCloseRolls < 4) totalRolls++;
+                        }
+                    }
+                }
+
+                Solution = totalRolls;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+
+        /// <summary>
+        /// Calculation of the joltage needed to power the escalators, second part
+        /// </summary>
+        public void RollsOfPaper2()
+        {
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                string line;
+
+                StreamReader sr = new StreamReader(FilePath);
+
+
+                List<List<char>> lines = new List<List<char>>();
+
+                line = sr.ReadLine() ?? string.Empty;
+
+                //Loop on the lines in the file to make a map : in each line, there is a list of rolls
+                for (int i = 0; line != null; i++)
+                {
+                    List<char> listRolls = line.ToList();
+                    lines.Add(listRolls);
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+
+                bool continueRecursive = true;
+                long totalRolls = Utils.RecursiveDeletionRolls(lines, out continueRecursive);
+
+                Solution = totalRolls;
             }
             else
             {
