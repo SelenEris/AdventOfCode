@@ -41,5 +41,86 @@ namespace AdventOfCode
             return isEqual;
         }
 
+        /// <summary>
+        /// Methode used to analyse a ID by splitting it the right number of times
+        /// </summary>
+        /// <param name="id"> ID to analyse</param>
+        /// <param name="numberParts"> Number of part to cut the ID</param>
+        /// <returns>Returns a bool at true if a equality</returns>
+        public static long RecursiveDeletionRolls(List<List<char>> lines, out bool topContinue)
+        {
+            List<Tuple<int, int>> rollsToRemove = new List<Tuple<int, int>>();
+
+            long totalRolls = 0;
+            topContinue = true;
+
+            //First loop on the lines
+            for (int i = 0; i < lines.Count; i++)
+            {
+                List<char> listRolls = lines[i];
+
+                //Second loop on the rolls
+                for (int j = 0; j < listRolls.Count; j++)
+                {
+                    char roll = listRolls[j];
+
+                    int countCloseRolls = 0;
+
+                    //If a roll is found, count the number of close rolls around
+                    if (roll == '@')
+                    {
+                        //It's a square where the limits are 'i-1','i+1' and 'j-1', 'j+1', but making shure we don't go over the map
+
+                        for (int k = (i != 0) ? i - 1 : i; k < lines.Count && k < i + 2; k++)
+                        {
+                            for (int l = (j != 0) ? j - 1 : j; l < listRolls.Count && l < j + 2; l++)
+                            {
+                                if (lines[k][l] == '@' && (k != i || l != j)) countCloseRolls++;
+                            }
+                        }
+
+                        if (countCloseRolls < 4)
+                        {
+                            rollsToRemove.Add(Tuple.Create(i,j));
+
+                        }
+                    }
+                }
+            }
+            totalRolls = rollsToRemove.Count;
+
+            //Suppression of the rolls
+            for (int i = 0; i < lines.Count; i++)
+            {
+                List<char> listRolls = lines[i];
+
+                
+                for (int j = 0; j < listRolls.Count; j++)
+                {
+                    char roll = listRolls[j];
+
+                    int countCloseRolls = 0;
+
+                    //We retrieve the counted roll and erase it to make a new map
+                    if (roll == '@')
+                    {
+                        Tuple<int, int> coordinate = Tuple.Create(i, j);
+
+                        if (rollsToRemove.Contains(coordinate)) lines[i][j] = '.';
+                    }
+                }
+            }
+
+            if (rollsToRemove.Count == 0) topContinue = false;
+
+            //Recursive loop until there is no more rolls to delete
+            while (topContinue)
+            {
+                totalRolls += RecursiveDeletionRolls(lines, out topContinue);
+            };
+
+            return totalRolls;
+        }
+
     }
 }
