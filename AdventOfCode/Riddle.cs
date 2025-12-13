@@ -660,23 +660,27 @@ namespace AdventOfCode
                             idEnd = listRanges[i][0] - 1;
 
                         }
-
-                        if (idStart <= listRanges[i][0])
+                        //If the current range entirely overlap an other range
+                        else if(idStart < listRanges[i][0] && idEnd > listRanges[i][1])
                         {
-                            break;
+                            //the other range is discarded
+                            listRanges.RemoveAt(i);
                         }
-
                     }
                     if (!hasRangeBeenDiscarded && idStart <= idEnd)
                     {
                         listRanges.Add(new List<long> { idStart, idEnd });
                         listRanges.Sort((x,y) => x[0].CompareTo(y[0]));
-                        countIdsOK += (idEnd - idStart) + 1;
                     }
 
                     line = sr.ReadLine();
                 }
 
+                for (int i = 0; i<listRanges.Count; i++)
+                {
+
+                    countIdsOK += (listRanges[i][1] - listRanges[i][0]) + 1;
+                }
                 sr.Close();
                 Solution = countIdsOK;
             }
