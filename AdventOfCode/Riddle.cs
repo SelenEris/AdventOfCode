@@ -47,6 +47,10 @@ namespace AdventOfCode
                     if (Number == 1) RollsOfPaper1();
                     else RollsOfPaper2();
                     break;
+                case 5:
+                    if (Number == 1) FreshIngredient1();
+                    else FreshIngredient2();
+                    break;
 
             }
         }
@@ -535,6 +539,146 @@ namespace AdventOfCode
                 long totalRolls = Utils.RecursiveDeletionRolls(lines, out continueRecursive);
 
                 Solution = totalRolls;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+        #endregion
+
+        #region Day5
+        /// <summary>
+        /// Calculation the fresh ingredients available
+        /// </summary>
+        public void FreshIngredient1()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                //Declaration of variables
+                string line;
+                int countFresh = 0;
+                List<Tuple<long, long>> listRanges = new List<Tuple<long, long>>();
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine();
+
+                //Loop on the firsts lines in the file to keep the ranges
+                while (!string.IsNullOrEmpty(line))
+                {
+                    //Preperation of variables used for comparaison
+                    long idStart = long.Parse(line.Split('-')[0]);
+                    long idEnd = long.Parse(line.Split('-')[1]);
+
+                    listRanges.Add(Tuple.Create(idStart, idEnd));
+                    line = sr.ReadLine();
+                }
+
+                //Now, the ranges are made, time to compare IDs
+                line = sr.ReadLine();
+
+                //Loop on all the IDs 
+                while (!string.IsNullOrEmpty(line))
+                {
+                    long id = long.Parse(line);
+
+                    //loop to search for the right range, if it exists
+                    foreach(Tuple<long, long> range in listRanges)
+                    {
+                        if (id >= range.Item1 && id <= range.Item2)
+                        {
+                            countFresh++;
+                            break;
+                        }
+
+                    }
+
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+
+                Solution = countFresh;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+
+        /// <summary>
+        /// Calculation the fresh ingredients available
+        /// </summary>
+        public void FreshIngredient2()
+        {
+
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                //Declaration of variables
+                string line;
+                long countIdsOK = 0;
+                List<List <long>> listRanges = new List<List<long>>();
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine();
+                int countLine = 0;
+                //Loop on the firsts lines in the file to keep the ranges
+                while (!string.IsNullOrEmpty(line))
+                {
+                    countLine ++;
+                    //Preperation of variables used for comparaison
+                    long idStart = long.Parse(line.Split('-')[0]);
+                    long idEnd = long.Parse(line.Split('-')[1]);
+                    bool hasRangeBeenDiscarded = false;
+                    //loop to verify the overlapping ranges
+                    for(int i = 0; i < listRanges.Count; i++)
+                    {
+                        //If the first part of the current range is in one of the other ranges
+                        if (idStart >= listRanges[i][0] && idStart <= listRanges[i][1])
+                        {
+                            //If the second part of the current range is in one of the other ranges
+                            if (idEnd >= listRanges[i][0] && idEnd <= listRanges[i][1])
+                            {
+                                //The current range is completely in an other range, it has to be discarded
+                                hasRangeBeenDiscarded = true;
+                                break;
+                            }
+                            else
+                            {
+                                //Only the last part is in an other range, so it's reduced from the start
+                                idStart = listRanges[i][1] + 1;
+
+                            }
+                        }
+                        //If the first part of the current range is NOT in one of the other ranges, the second part might be
+                        else if (idEnd >= listRanges[i][0] && idEnd <= listRanges[i][1])
+                        {
+                            //Only the last part is in an other range, so it's reduced at the end
+                            idEnd = listRanges[i][0] - 1;
+
+                        }
+
+                        if (idStart <= listRanges[i][0])
+                        {
+                            break;
+                        }
+
+                    }
+                    if (!hasRangeBeenDiscarded && idStart <= idEnd)
+                    {
+                        listRanges.Add(new List<long> { idStart, idEnd });
+                        listRanges.Sort((x,y) => x[0].CompareTo(y[0]));
+                        countIdsOK += (idEnd - idStart) + 1;
+                    }
+
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+                Solution = countIdsOK;
             }
             else
             {
