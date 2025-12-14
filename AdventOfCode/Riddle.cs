@@ -57,6 +57,10 @@ namespace AdventOfCode
                     if (Number == 1) MathProblem1();
                     else MathProblem2();
                     break;
+                case 7:
+                    if (Number == 1) SplitBeam1();
+                    else SplitBeam2();
+                    break;
 
             }
         }
@@ -697,7 +701,7 @@ namespace AdventOfCode
         }
         #endregion
 
-        #region Day6
+        #region Day 6
         /// <summary>
         /// Calculation the fresh ingredients available
         /// </summary>
@@ -886,6 +890,116 @@ namespace AdventOfCode
                     sumCalculus += resultCalculus;
                 }
                 Solution = sumCalculus;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+        #endregion
+
+        #region Day 7
+        /// <summary>
+        /// Calculation the fresh ingredients available
+        /// </summary>
+        public void SplitBeam1()
+        {
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                //Declaration of variables
+                string line;
+                long sumSplit = 0;
+                List<List<char>> tabManifold = new List<List<char>>();
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine();
+
+                //Loop to get all the file in the list
+                while (!string.IsNullOrEmpty(line))
+                {
+                    //Preperation of variables used for comparaison
+                    tabManifold.Add(line.ToList());
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+
+                //Research of the 'S' position
+                int firstPosition = tabManifold[0].FindIndex(x => x == 'S');
+
+                sumSplit = Utils.RecursiveBeamSearch(tabManifold, 1, firstPosition);
+
+
+                foreach (List<char> list in tabManifold)
+                {
+                    string str = string.Empty;
+                    list.ForEach(x => str += x);
+                    Console.WriteLine(str);
+                }
+
+                Solution = sumSplit;
+            }
+            else
+            {
+                Console.WriteLine("The path to the file is not correct.");
+            }
+        }
+
+        /// <summary>
+        /// Calculation the fresh ingredients available
+        /// </summary>
+        public void SplitBeam2()
+        {
+            if (!string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+            {
+                //Declaration of variables
+                string line;
+                long sumSplit = 0;
+                List<List<string>> tabManifold = new List<List<string>>();
+
+                StreamReader sr = new StreamReader(FilePath);
+
+                line = sr.ReadLine();
+
+                //Loop to get all the file in the list
+                while (!string.IsNullOrEmpty(line))
+                {
+                    //Preperation of variables used for comparaison
+                    List<char> listChar = new List<char>();
+                    listChar = line.ToList();
+
+                    List<string> listString = new List<string>();
+                    foreach(char c in listChar)
+                    {
+                        listString.Add(c.ToString());
+                    }
+                    tabManifold.Add(listString);
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+
+                //Research of the 'S' position
+                int firstPosition = tabManifold[0].FindIndex(x => x == "S");
+
+
+                Utils.RecursiveBeamSearchV2(tabManifold, 1, firstPosition);
+
+                foreach (List<string> list in tabManifold)
+                {
+                    string str = string.Empty;
+                    list.ForEach(x => str += x);
+                    Console.WriteLine(str);
+                }
+
+                foreach (string str in tabManifold[tabManifold.Count-1])
+                {
+                    long parsedStr = 0;
+                    if(long.TryParse(str, out parsedStr)) sumSplit += parsedStr;
+                }
+
+                Solution = sumSplit;
             }
             else
             {

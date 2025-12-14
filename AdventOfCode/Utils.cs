@@ -14,30 +14,31 @@ namespace AdventOfCode
         /// <param name="id"> ID to analyse</param>
         /// <param name="numberParts"> Number of part to cut the ID</param>
         /// <returns>Returns a bool at true if a equality</returns>
-        public static bool RecursiveDivision(string id, int numberParts) 
+        public static bool RecursiveDivision(string id, int numberParts)
         {
             //Declaration of variables
             bool isEqual = false;
             string[] listParts = new string[numberParts];
 
             //Filling of the list of part by splitting the ID to analyse in the number of part asked
-            for (int i = 0; i < numberParts; i++) {
-                if(i != numberParts-1) listParts[i] = id.Substring((id.Length / numberParts)*i, id.Length/numberParts); 
-                else listParts[i] = id.Substring((id.Length / numberParts)*i);
+            for (int i = 0; i < numberParts; i++)
+            {
+                if (i != numberParts - 1) listParts[i] = id.Substring((id.Length / numberParts) * i, id.Length / numberParts);
+                else listParts[i] = id.Substring((id.Length / numberParts) * i);
             }
 
             //If there is only one distinct number in the list, it means all the part of the list are equal
             if (listParts.Distinct<string>().Count() == 1)
-            { 
+            {
                 isEqual = true;
             }
             //If the numbers are not equal
             else
             {
                 //and there is still place left, it starts over with a higher number of part
-                if(numberParts < id.Length) isEqual = RecursiveDivision(id, numberParts+1); 
+                if (numberParts < id.Length) isEqual = RecursiveDivision(id, numberParts + 1);
             }
-            
+
             return isEqual;
         }
 
@@ -81,7 +82,7 @@ namespace AdventOfCode
 
                         if (countCloseRolls < 4)
                         {
-                            rollsToRemove.Add(Tuple.Create(i,j));
+                            rollsToRemove.Add(Tuple.Create(i, j));
 
                         }
                     }
@@ -94,7 +95,7 @@ namespace AdventOfCode
             {
                 List<char> listRolls = lines[i];
 
-                
+
                 for (int j = 0; j < listRolls.Count; j++)
                 {
                     char roll = listRolls[j];
@@ -114,7 +115,7 @@ namespace AdventOfCode
             if (rollsToRemove.Count == 0) topContinue = false;
 
             //Recursive loop until there is no more rolls to delete
-            while (topContinue)
+            if (topContinue)
             {
                 totalRolls += RecursiveDeletionRolls(lines, out topContinue);
             };
@@ -122,5 +123,95 @@ namespace AdventOfCode
             return totalRolls;
         }
 
+        /// <summary>
+        /// Methode used to create the splitting beam, for the 1st part
+        /// </summary>
+        /// <param name="lines"> tab of all the manifest</param>
+        /// <param name="range"> Range to start the process</param>
+        /// <param name="position"> Position of the last ^</param>
+        /// <returns>Returns a bool at true if a equality</returns>
+        public static long RecursiveBeamSearch(List<List<char>> lines, int range, int position)
+        {
+            long countSplit = 0;
+            bool foundSplit = false;
+            long countSplitLeft = 0;
+            long countSplitRight = 0;
+            //First loop on the lines
+            for (int i = range; i < lines.Count && !foundSplit; i++)
+            {
+                //If the beam face a . it continues to the next line
+                if (lines[i][position] == '.')
+                {
+                    lines[i][position] = '|';
+                    continue;
+                }
+                //If the beam meats a ^ it duplicates at left and right
+                else if (lines[i][position] == '^')
+                {
+                    foundSplit = true;
+
+                    countSplit++;
+                    lines[i][position] = 'v';
+                    countSplitLeft = RecursiveBeamSearch(lines, i, position - 1);
+                    countSplitRight = RecursiveBeamSearch(lines, i, position + 1);
+
+                }
+                //If the beam meats a ^ it duplicates at left and right
+                else if (lines[i][position] == 'v')
+                {
+                    break;
+
+                }
+
+            }
+            countSplit += countSplitLeft + countSplitRight;
+
+            return countSplit;
+        }
+
+        /// <summary>
+        /// Methode used to create the splitting beam, for the 2nd part
+        /// </summary>
+        /// <param name="lines">Tab of all the manifest</param>
+        /// <param name="range">Range to start the process</param>
+        /// <param name="position">Position of the last ^</param>
+        /// <param name="direction">Last direction taken</param>
+        /// <returns>Returns a bool at true if a equality</returns>
+        public static void RecursiveBeamSearchV2(List<List<string>> lines, int range, int position)
+        {
+            bool foundSplit = false;
+
+            //First loop on the lines
+            for (int i = range; i < lines.Count && !foundSplit; i++)
+            {
+                //If the beam face a . it continues to the next line
+                if (lines[i][position] == ".")
+                {
+                    lines[i][position] = "|";
+                    continue;
+                }
+                //If the beam meats a ^ it duplicates at left and right
+                else if (lines[i][position] == "^")
+                {
+                    foundSplit = true;
+
+                    lines[i][position] = "v";
+                    RecursiveBeamSearchV2(lines, i, position - 1);
+                    RecursiveBeamSearchV2(lines, i, position + 1);
+
+                }
+                //If the beam meats a ^ it duplicates at left and right
+                else if (lines[i][position] == "v")
+                {
+                    break;
+
+                }
+                else
+                {
+                    lines[i][position] = (long.Parse(lines[i][position]) + 1).ToString();
+                }
+
+            }
+        }
     }
 }
